@@ -3,11 +3,16 @@ from transformers import *
 from bert import dataloading as dl
 from torch.utils.data import DataLoader
 import numpy as np
+from transformers import BertTokenizer
+
 # Find GPU
 device = torch.device("cuda")
 
-PATH = '../out/model.pt'
-DATA = '../../data/beetle_training.npy'
+PATH = '../models/bert_asag/model.pt'
+DATA = '../data/preprocessed/beetle_train.npy'
+
+pretrained_weights = 'bert-base-uncased'
+tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
 
 # Initialize Model and Optimizer
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
@@ -21,6 +26,7 @@ beetle_loader = DataLoader(beetle_data)
 print(len(beetle_data))
 correct_guesses = []
 label = []
+steps = []
 with torch.no_grad():
     for step, batch in enumerate(beetle_loader):
         batch = tuple(t.to(device) for t in batch)
@@ -29,11 +35,13 @@ with torch.no_grad():
         logits = outputs[1].detach().cpu().numpy()
         labels = lab.to('cpu').numpy()
         if labels[0] == np.argmax(logits):
-            correct_guesses.append(token_ids)
+            id_s = np.array(token_ids.squeeze().cpu())
+            tokens = tokenizer.convert_ids_to_tokens(id_s)
+            correct_guesses.append(tokens)
             label.append(labels[0])
 
-        print(step)
-np.save('../../data/correct_guesses_beetle.npy', np.array(correct_guesses), allow_pickle=True)
-np.save('../../data/labels_beetle.npy', np.array(label), allow_pickle=True)
+data = np.array(list(zip(correct_guesses, label)))
+np.save('../data/sear_data/correct_beetle', np.array(data), allow_pickle=True)
+
 
 

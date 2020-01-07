@@ -1,8 +1,5 @@
 # Various functions and methods for preprocessing/metric measurement/plotting etc...
-import math
-import os
-import random
-import xml.etree.ElementTree as et
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -90,96 +87,6 @@ def accuracy(predictions, truth):
     labels_flat = truth.flatten()
     return np.sum(flatten_pred == labels_flat) / len(truth)
 
-
-########################################################################################################################
-# Preprocessing ########################################################################################################
-########################################################################################################################
-
-def label_to_int(lab):
-    """
-    Assignes label strings to a class
-    :param lab: string
-    :return: class number
-    """
-    if lab == 'incorrect':
-        return 0
-    if lab == 'contradictory':
-        return 1
-    if lab == 'correct':
-        return 2
-    else:
-        raise ValueError
-
-
-def token_seg_att(seq1, seq2, tokenizer, cls=['[CLS]'], sep=['[SEP]'], pad=['[PAD]'], max_tokens=128):
-    """
-    Attaches tokens to 2 sentences and transforms tokens to match BERT input
-    :param tokenizer: Tokenizer to obtain token id's
-    :param seq1: first sentence
-    :param seq2: second sentence
-    :param cls: CLS token, may be changed
-    :param sep: SEP token, may be changed
-    :param pad: PAD token, may be changed
-    :param max_tokens: max sequence length
-    :return: token id's of complete sequence, segmentation mask and attention mask
-    """
-    tok1 = tokenizer.tokenize(seq1)
-    tok2 = tokenizer.tokenize(seq2)
-    tokens = cls + tok1 + sep + tok2
-    if len(tokens) > max_tokens - 1:
-        tokens = tokens[:max_tokens - 1] + sep
-    else:
-        tokens = tokens + sep
-    att_len = len(tokens)
-    while len(tokens) < max_tokens:
-        tokens = tokens + pad
-    assert (len(tokens) == max_tokens)
-    first_sep = tokens.index(sep[0])
-    tok_ids = np.asarray(tokenizer.convert_tokens_to_ids(tokens))
-    seg = np.zeros(max_tokens)
-    att = np.append(np.ones(att_len), np.zeros(max_tokens - att_len))
-    if att_len < max_tokens:
-        seg[first_sep + 1: att_len] = 1
-    else:
-        seg[first_sep + 1:] = 1
-    return tok_ids, seg, att
-
-
-def load_data(path, tokenizer):
-    """
-    Loads data from directory of XML files
-    :param path: path to load data from
-    :param tokenizer: Tokenizer for tokens
-    :return: list of preprocessed data
-    """
-    array = []
-    files = os.listdir(path)
-    for file in files:
-        root = et.parse(path + '/' + file).getroot()
-        for ref_answer in root[1]:
-            for stud_answer in root[2]:
-                t, s, a = token_seg_att(ref_answer.text, stud_answer.text, tokenizer)
-                label = label_to_int(stud_answer.get('accuracy'))
-                array.append([t, s, a, label])
-    return array
-
-
-def create_npy(data, location, mode='test'):
-    """
-    Creates an npy file of preprocessed data
-    :param data: list of preprocessed data
-    :param location: where the file should be saved
-    :param mode: if mode is train, we split the data for training and validation, else keep it together
-    """
-    if mode == 'train':
-        assert (len(location) == 2)
-        random.shuffle(data)
-        split = math.floor(0.8 * len(data))
-        np.save(location[0], data[:split], allow_pickle=True)
-        np.save(location[1], data[split:], allow_pickle=True)
-    elif mode == 'test':
-        np.save(location, data, allow_pickle=True)
-
 ########################################################################################################################
 # Plotting #############################################################################################################
 ########################################################################################################################
@@ -209,3 +116,8 @@ def plot(path, location, metric_names):
     plt.savefig(location)
 
     return 0
+
+########################################################################################################################
+# Transformations ######################################################################################################
+########################################################################################################################
+

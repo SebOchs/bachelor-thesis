@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from tqdm import trange
-from transformers import *
+from transformers import BertForSequenceClassification, AdamW
 from bert import dataloading as dl
 import os
 import bert.utils as utils
@@ -15,10 +15,10 @@ BATCH_SIZE = 16
 LEARNING_RATE = 2e-5
 EPOCHS = 8
 pretrained_weights = 'bert-base-uncased'
-OUT = 'out'
-MODEL_PATH = 'bert/out/model.pt'
-TRAIN_LOSS_PATH = 'bert/out/train_loss_per_batch.npy'
-VAL_LOSS_PATH = 'bert/out/val_loss_per_epoch.npy'
+
+MODEL_PATH = '../models/bert_asag/model.pt'
+TRAIN_LOSS_PATH = '../models/bert_asag/train_loss_per_batch.npy'
+VAL_LOSS_PATH = '../models/bert_asag/val_loss_per_epoch.npy'
 
 # Initialize Model and Optimizer
 model = BertForSequenceClassification.from_pretrained(pretrained_weights, num_labels=3)
@@ -26,8 +26,8 @@ model.cuda()
 optimizer = AdamW(model.parameters(), lr=LEARNING_RATE, correct_bias=False)
 
 # Load data
-train_data = dl.SemEvalDataset("data/train.npy")
-val_data = dl.SemEvalDataset("data/val.npy")
+train_data = dl.SemEvalDataset("../data/preprocessed/sciEntsBank_train.npy")
+val_data = dl.SemEvalDataset("../data/preprocessed/sciEntsBank_val.npy")
 
 train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, num_workers=0, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=BATCH_SIZE, num_workers=0, shuffle=True)
@@ -36,7 +36,7 @@ val_loader = DataLoader(val_data, batch_size=BATCH_SIZE, num_workers=0, shuffle=
 train_loss = []
 val_loss_detailed = []
 val_loss_per_epoch = []
-for _ in trange(EPOCHS, desc="Epoch"):
+for i in trange(EPOCHS, desc="Epoch "):
 
     # Training
     model.train()
@@ -86,8 +86,6 @@ for _ in trange(EPOCHS, desc="Epoch"):
     # print("Accuracy: ", acc)
 
 
-if not os.path.exists('bert/' + OUT):
-    os.mkdir('bert/' + OUT)
 torch.save(model.state_dict(), MODEL_PATH)
 np.save(TRAIN_LOSS_PATH, train_loss)
 np.save(VAL_LOSS_PATH, val_loss_per_epoch)
