@@ -118,7 +118,7 @@ class BertPreprocessor:
         NPY = ".npy"
         mode = self.mode
         if mode == 'train':
-            data = self.load_data(path=self.data_path)
+            data = self.load_data()
             np.random.shuffle(data)
             train, val = np.split(data, [int(len(data) * self.split)])
             train_path = self.save_path + '_train' + NPY

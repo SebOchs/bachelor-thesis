@@ -32,7 +32,7 @@ with torch.no_grad():
         batch = tuple(t.to(device) for t in batch)
         token_ids, segment, attention, lab = batch
         outputs = model(token_ids, token_type_ids=segment, attention_mask=attention, labels=lab)
-        logits = outputs[1].detach().cpu().numpy()
+        logits = outputs[1].detach().cpu().numpy().squeeze()
         labels = lab.to('cpu').numpy()
         if labels[0] == np.argmax(logits):
             id_s = np.array(token_ids.squeeze().cpu())
