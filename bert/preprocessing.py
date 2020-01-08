@@ -1,7 +1,4 @@
-import bert.utils as utils
-import math
 import os
-import random
 import xml.etree.ElementTree as et
 from transformers import BertTokenizer
 import numpy as np
@@ -127,7 +124,7 @@ class BertPreprocessor:
             create_npy(val_path, val)
         elif mode == 'test':
             test_path = self.save_path + '_test' + NPY
-            data = self.load_data(path=self.data_path)
+            data = self.load_data()
             create_npy(test_path, data)
 
 

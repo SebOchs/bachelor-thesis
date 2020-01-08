@@ -1,6 +1,6 @@
 import torch
 from transformers import *
-from bert import dataloading as dl
+import dataloading as dl
 from torch.utils.data import DataLoader
 import numpy as np
 from transformers import BertTokenizer

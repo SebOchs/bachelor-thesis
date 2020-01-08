@@ -3,9 +3,8 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import trange
 from transformers import BertForSequenceClassification, AdamW
-from bert import dataloading as dl
-import os
-import bert.utils as utils
+import dataloading as dl
+import utils
 
 # Find GPU
 device = torch.device("cuda")

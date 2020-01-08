@@ -1,5 +1,5 @@
-import bert.utils as utils
-import os
+import utils
+
 TRAIN_PATH = 'out/train_loss_per_batch.npy'
 VAL_PATH = 'out/val_loss_per_epoch.npy'
 TRAIN_LOC = 'out/train.png'
