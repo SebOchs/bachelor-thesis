@@ -10,7 +10,7 @@ import utils
 device = torch.device("cuda")
 
 # BERT and path constants:
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 LEARNING_RATE = 2e-5
 EPOCHS = 4
 pretrained_weights = 'bert-base-uncased'

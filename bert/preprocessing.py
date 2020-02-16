@@ -131,7 +131,7 @@ class BertPreprocessor:
 if __name__ == '__main__':
     # Tokenizer
     pretrained_weights = 'bert-base-uncased'
-    tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
+    tokenizer = BertTokenizer.from_pretrained(pretrained_weights, do_lower_case=True, do_basic_tokenize=True)
     # Train Data
     BertPreprocessor(tokenizer, data_path='../data/datasets/training/sciEntsBank', save_path='../data/preprocessed/sciEntsBank',
                      mode='train').preprocess()

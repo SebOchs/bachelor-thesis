@@ -9,7 +9,7 @@ from transformers import BertTokenizer
 device = torch.device("cuda")
 
 PATH = '../models/bert_asag/model.pt'
-DATA = '../data/preprocessed/beetle_train.npy'
+DATA = '../data/preprocessed/sciEntsBank_val.npy'
 
 pretrained_weights = 'bert-base-uncased'
 tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
@@ -41,7 +41,7 @@ with torch.no_grad():
             label.append(labels[0])
 
 data = np.array(list(zip(correct_guesses, label)))
-np.save('../data/sear_data/correct_beetle', np.array(data), allow_pickle=True)
+np.save('../data/sear_data/correct_sciEntsBank_val', np.array(data), allow_pickle=True)
 
 
 
