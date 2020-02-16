@@ -20,7 +20,7 @@ $ conda env create --file asag_environment.yaml
 $ conda env create --file sear_environment.yaml
 ```
 
-For preprocessing the SemEval 2013 Short Answer Grading datasets, 
+To preprocess the SemEval 2013 Short Answer Grading datasets, 
 activate the ASAG environment and run the preprocessing script in bert
 
 ```
