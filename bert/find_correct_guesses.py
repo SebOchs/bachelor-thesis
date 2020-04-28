@@ -1,6 +1,6 @@
 import torch
 from transformers import *
-import dataloading as dl
+import utils.dataloading as dl
 from torch.utils.data import DataLoader
 import numpy as np
 from transformers import BertTokenizer
@@ -8,9 +8,17 @@ from transformers import BertTokenizer
 # Find GPU
 device = torch.device("cuda")
 
-PATH = '../models/bert_asag/model.pt'
-DATA = '../data/preprocessed/sciEntsBank_val.npy'
+# Set three paths to find correct guesses of a BERT model:
+# PATH: location of the model
+# DATA: location of the data to predict
+# CORRECT: location where to save correct guesses
 
+PATH = '../models/bert_mnli/model_mnli.pt'
+DATA = '../data/preprocessed/bert_mnli_mismatched_test.npy'
+CORRECT = '../data/eval_data/bert_mnli_mm_correct'
+testing = np.load(DATA, allow_pickle=True)
+print(len(testing))
+print(len([x for x in testing if x[3] == 0]))
 pretrained_weights = 'bert-base-uncased'
 tokenizer = BertTokenizer.from_pretrained(pretrained_weights)
 
@@ -21,14 +29,14 @@ model.cuda()
 model.eval()
 
 # Data to evaluate
-beetle_data = dl.SemEvalDataset(DATA)
-beetle_loader = DataLoader(beetle_data)
-print(len(beetle_data))
+data = dl.SemEvalDataset(DATA)
+loader = DataLoader(data)
+print("Nr. of data instances: ", len(data))
 correct_guesses = []
 label = []
 steps = []
 with torch.no_grad():
-    for step, batch in enumerate(beetle_loader):
+    for step, batch in enumerate(loader):
         batch = tuple(t.to(device) for t in batch)
         token_ids, segment, attention, lab = batch
         outputs = model(token_ids, token_type_ids=segment, attention_mask=attention, labels=lab)
@@ -39,9 +47,10 @@ with torch.no_grad():
             tokens = tokenizer.convert_ids_to_tokens(id_s)
             correct_guesses.append(tokens)
             label.append(labels[0])
-
+print("Nr. of correct guesses: ", len(correct_guesses))
+print("Nr. of correct incorrect predictions: ", len([x for x in label if x == 0]))
 data = np.array(list(zip(correct_guesses, label)))
-np.save('../data/sear_data/correct_sciEntsBank_val', np.array(data), allow_pickle=True)
+np.save(CORRECT, np.array(data), allow_pickle=True)
 
 
 
