@@ -88,8 +88,7 @@ for i in trange(EPOCHS, desc="Epoch "):
     print("Accuracy: ", acc)
     new_tracker = (macro * 2 + weighted + acc) / 4
     if tracker < new_tracker:
-        torch.save(model.state_dict(),
-                   MODEL_PATH[:-3] + '_' + str(i) + '_' + str(new_tracker * 10000)[:4] + MODEL_PATH[-3:])
+        torch.save(model.state_dict(), MODEL_PATH)
         tracker = new_tracker
 
 

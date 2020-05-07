@@ -138,14 +138,9 @@ if __name__ == '__main__':
     pretrained_weights = 'bert-base-uncased'
     tokenizer = BertTokenizer.from_pretrained(pretrained_weights, do_lower_case=True, do_basic_tokenize=True)
     # Train Data
-    #a = BertPreprocessor(tokenizer, data=["If the motor runs, the object is a conductor",
-    #                                      "He will know because a conductor is not glowing in a circuit.",
-    #                                      0]).load_data()
-    #BertPreprocessor(tokenizer, data_path='../data/datasets/training/beetle', save_path='../data/preprocessed/beetle',
-    #                 mode='test').preprocess()
+
+    # Example of preprocessing a data set
     BertPreprocessor(tokenizer, data_path='../data/datasets/testing/beetle/test-unseen-answers', save_path='../data/preprocessed/beetle_ua',
                      mode='test').preprocess()
-    BertPreprocessor(tokenizer, data_path='../data/datasets/testing/beetle/test-unseen-questions',
-                     save_path='../data/preprocessed/beetle_uq',
-                     mode='test').preprocess()
+
 
