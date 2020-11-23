@@ -99,3 +99,4 @@ In this project, the following code was used and modified:
 * https://github.com/OpenNMT/OpenNMT-py
 * https://github.com/jind11/TextFooler
 
+This thesis was done in cooperation with Anna Filighera and the Multimedia Communications Lab at TU Darmstadt.
